@@ -7,6 +7,11 @@
 #define ADDRESS 0x123
 #define APPS1_CS 19
 #define APPS2_CS 21
+#define FRONT_B_CS 22
+#define REAR_B_CS 23
+#define SCLK 25
+#define MISO 18
+#define MOSI 34
 // #define MIN_APPS1
 // #define MAX_APPS1
 // #define MIN_APPS2
@@ -45,11 +50,15 @@ float apps2_scaled;
 int32_t throttle_percent;
 
 void adc_init() {
-  SPI.begin();
+  SPI.begin(SCLK, MISO, MOSI);
   pinMode(APPS1_CS, OUTPUT);
   pinMode(APPS2_CS, OUTPUT);
+  pinMode(FRONT_B_CS, OUTPUT);
+  pinMode(REAR_B_CS, OUTPUT);
   digitalWrite(APPS1_CS, HIGH);
   digitalWrite(APPS2_CS, HIGH);
+  digitalWrite(FRONT_B_CS, HIGH);
+  digitalWrite(REAR_B_CS, HIGH);
 }
 
 void read_adcs() {
@@ -58,12 +67,13 @@ void read_adcs() {
   // read from APPS1 adc
   digitalWrite(APPS1_CS, LOW);
   apps1_adc = SPI.transfer16(0x0000);
+  delay(100);
   digitalWrite(APPS1_CS, HIGH);
 
   // read from APPS2 adc
-  digitalWrite(APPS2_CS, LOW);
-  apps2_adc = SPI.transfer16(0x0000);
-  digitalWrite(APPS2_CS, HIGH);
+  // digitalWrite(APPS2_CS, LOW);
+  // apps2_adc = SPI.transfer16(0x0000);
+  // digitalWrite(APPS2_CS, HIGH);
 
   SPI.endTransaction();
 
@@ -118,7 +128,9 @@ void setup() {
 }
 
 void loop() {
-  update_throttle();
+  read_adcs();
+  // update_throttle();
   print_all();
   timer_group.Tick(millis());
+  // delay(100);
 }
