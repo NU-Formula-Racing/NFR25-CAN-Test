@@ -116,6 +116,7 @@ void print_all() {
 
 void tenms() {
   txsignal = 50;
+  Set_Current = apps1_adc/2000;
   bus.Tick();
 }
 
